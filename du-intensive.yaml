@@ -139,3 +139,10 @@ jobs:
             - name: secret-4
               type: secret
               path: /var/secret4
+
+      - objectTemplate: templates/ptp-events-consumer/service-account.yaml
+        replicas: 1
+      - objectTemplate: templates/ptp-events-consumer/deployment.yaml
+        replicas: 1
+      - objectTemplate: templates/ptp-events-consumer/service.yaml
+        replicas: 1

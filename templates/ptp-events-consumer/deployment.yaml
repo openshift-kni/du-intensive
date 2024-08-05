@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ptp-event-deployment
+  labels:
+    app: du-ptp-event-consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: du-ptp-event-consumer
+  template:
+    metadata:
+      labels:
+        app: du-ptp-event-consumer
+    spec:
+      nodeSelector:
+        node-role.kubernetes.io/worker: ""
+      serviceAccountName: ptp-event-consumer-sa
+      containers:
+      - name: ptp-consumer
+        image: quay.io/jenchen/ptp-event-consumer:latest
+        args:
+          - "--local-api-addr=127.0.0.1:27017"
+          - "--api-path=/api/ocloudNotifications/v1/"
+          - "--api-addr=127.0.0.1:27017"
+        env:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: NAME_SPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: CONSUMER_PORT
+          value: "27017"
+        - name: CONSUMER_TYPE
+          value: "PTP"
+        - name: ENABLE_STATUS_CHECK
+          value: "true"
+        volumeMounts:
+          - name: pubsubstore
+            mountPath: /store
+      volumes:
+        - name: pubsubstore
+          emptyDir: {}
