@@ -1,0 +1,36 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: kubectlapp-{{.Replica}}
+  # namespace: workload
+spec:
+  template:
+    metadata:
+      labels:
+        name: kubectlapp-{{.Replica}}
+    spec:
+      serviceAccountName: kubectlapp-sa-{{.Replica}}
+      nodeSelector:
+        node-role.kubernetes.io/worker: ""
+      containers:
+        - name: kubectlapp
+          image: "{{ .Image }}"
+          command: ["/bin/sh","-c"]
+          args:
+          - |
+            while true; do
+              kubectl get pods -n workload
+              kubectl get services -n workload
+              sleep 1
+            done
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+      restartPolicy: Always
+  replicas: 1
+  selector:
+    matchLabels:
+      name: kubectlapp-{{.Replica}}
+  strategy:
+    type: RollingUpdate

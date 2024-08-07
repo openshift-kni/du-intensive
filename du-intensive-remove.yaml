@@ -1,0 +1,67 @@
+---
+jobs:
+  - name: du-workload-remove
+    qps: 2
+    burst: 2
+    jobType: delete
+    waitForDeletion: true
+    objects:
+      - kind: Deployment
+        labelSelector: {kube-burner-job: du-workload}
+        apiVersion: apps/v1
+
+  - name: ensure-pods-removal
+    qps: 10
+    burst: 10
+    jobType: delete
+    waitForDeletion: true
+    objects:
+      - kind: Pod
+        labelSelector: {kube-burner-job: du-workload}
+
+  - name: remove-configmaps-secrets
+    qps: 2
+    burst: 2
+    jobType: delete
+    waitForDeletion: true
+    objects:
+      - kind: ConfigMap
+        labelSelector: {kube-burner-job: du-workload}
+      - kind: Secret
+        labelSelector: {kube-burner-job: du-workload}
+
+  - name: remove-services
+    qps: 2
+    burst: 2
+    jobType: delete
+    waitForDeletion: true
+    objects:
+      - kind: Service
+        labelSelector: {kube-burner-job: du-workload}
+      - kind: ServiceAccount
+        labelSelector: {kube-burner-job: du-workload}
+
+  - name: remove-roles
+    qps: 2
+    burst: 2
+    jobType: delete
+    namespace: workload
+    waitForDeletion: true
+    objects:
+      - kind: RoleBinding
+        labelSelector: {kube-burner-job: du-workload}
+        apiVersion: rbac.authorization.k8s.io/v1
+      - kind: Role
+        labelSelector: {kube-burner-job: du-workload}
+        apiVersion: rbac.authorization.k8s.io/v1
+
+  - name: remove-volumes
+    qps: 2
+    burst: 2
+    jobType: delete
+    waitForDeletion: true
+    objects:
+      - kind: PersistentVolumeClaim
+        labelSelector: {kube-burner-job: du-workload}
+      - kind: PersistentVolume
+        labelSelector: {kube-burner-job: du-workload}

@@ -1,0 +1,58 @@
+---
+jobs:
+  - name: du-workload
+    jobIterations: 1
+    qps: 4
+    burst: 4
+    namespacedIterations: false
+    namespace: workload
+    podWait: false
+    cleanup: true
+    waitWhenFinished: true
+    maxWaitTimeout: 5m
+    errorOnVerify: true
+    objects:
+
+    # Template of Gu Pods with fedora-stress-ng
+      - objectTemplate: templates/guaranteed/deployment.yaml
+        replicas: 1
+        inputVars:
+          Image: "{{ .REGISTRY }}/fedora-stress-ng"
+      - objectTemplate: templates/guaranteed/service.yaml
+        replicas: 1
+      - objectTemplate: templates/guaranteed/configmap1.yaml
+        replicas: 1
+      - objectTemplate: templates/guaranteed/configmap2.yaml
+        replicas: 1
+      - objectTemplate: templates/guaranteed/secret1.yaml
+        replicas: 1
+      - objectTemplate: templates/guaranteed/secret2.yaml
+        replicas: 1
+      - objectTemplate: templates/guaranteed/secret3.yaml
+        replicas: 1
+      - objectTemplate: templates/guaranteed/secret4.yaml
+        replicas: 1
+
+    # Template of burstable pods with exec probes
+      - objectTemplate: templates/webserver/webserver-deployment.yaml
+        replicas: 10
+        inputVars:
+          Image: "{{ .REGISTRY }}/sampleapp"
+      - objectTemplate: templates/webserver/webserver-service.yaml
+        replicas: 10
+      - objectTemplate: templates/webserver/curl-deployment.yaml
+        replicas: 10
+        inputVars:
+          Image: "{{ .REGISTRY }}/curl"
+
+    # Templates of burstable pods with kubeapiserver reqs
+      - objectTemplate: templates/kubectlapp/serviceaccount.yaml
+        replicas: 10
+      - objectTemplate: templates/kubectlapp/role.yaml
+        replicas: 10
+      - objectTemplate: templates/kubectlapp/rolebinding.yaml
+        replicas: 10
+      - objectTemplate: templates/kubectlapp/deployment.yaml
+        replicas: 10
+        inputVars:
+          Image: "{{ .REGISTRY }}/kubectl"
