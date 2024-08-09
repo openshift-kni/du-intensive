@@ -46,18 +46,10 @@ spec:
             - name: stress_vm-bytes
               value: "512M"
           volumeMounts:
-            - name: configmap-1
-              mountPath: /var/configmap1
-            - name: configmap-2
-              mountPath: /var/configmap2
-            - name: secret-1
-              mountPath: /var/secret1
-            - name: secret-2
-              mountPath: /var/secret2
-            - name: secret-3
-              mountPath: /var/secret3
-            - name: secret-4
-              mountPath: /var/secret4
+            {{ range  $volume := .volumes }}
+            - name: {{ $volume.name }}
+              mountPath: {{ $volume.path }}
+            {{ end }}
             - name: hugepage
               mountPath: /hugepages
       dnsPolicy: Default
@@ -74,24 +66,19 @@ spec:
           effect: "NoExecute"
           tolerationSeconds: 900
       volumes:
-        - name: configmap-1
+        {{ range  $volume := .volumes }}
+        - name: {{ $volume.name }}
+          {{ if eq $volume.type "configMap" }}
           configMap:
-            name: configmap1-{{.Replica}}
-        - name: configmap-2
-          configMap:
-            name: configmap2-{{.Replica}}
-        - name: secret-1
+            name: {{ $volume.name }}
+          {{ else if eq $volume.type "secret" }}
           secret:
-            secretName: secret1-{{.Replica}}
-        - name: secret-2
-          secret:
-            secretName: secret2-{{.Replica}}
-        - name: secret-3
-          secret:
-            secretName: secret3-{{.Replica}}
-        - name: secret-4
-          secret:
-            secretName: secret4-{{.Replica}}
+            secretName: {{ $volume.name }}
+          {{ else if eq $volume.type "persistentVolumeClaim" }}
+          persistentVolumeClaim:
+            claimName: {{ $volume.name }}
+          {{ end }}
+        {{ end }}
         - name: hugepage
           emptyDir:
             medium: HugePages
