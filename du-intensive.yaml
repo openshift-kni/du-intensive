@@ -14,24 +14,37 @@ jobs:
     objects:
 
     # Template of Gu Pods with fedora-stress-ng
+      - objectTemplate: templates/guaranteed/configmap.yaml
+        replicas: 2
+      - objectTemplate: templates/guaranteed/secret.yaml
+        replicas: 4
       - objectTemplate: templates/guaranteed/deployment.yaml
         replicas: 1
         inputVars:
           Image: "{{ .REGISTRY }}/fedora-stress-ng"
+          volumes:
+            - name: configmap-1
+              type: configMap
+              path: /var/configmap1
+            - name: configmap-2
+              type: configMap
+              path: /var/configmap2
+            - name: secret-1
+              type: secret
+              path: /var/secret1
+            - name: secret-2
+              type: secret
+              path: /var/secret2
+            - name: secret-3
+              type: secret
+              path: /var/secret3
+            - name: secret-4
+              type: secret
+              path: /var/secret4
+
       - objectTemplate: templates/guaranteed/service.yaml
         replicas: 1
-      - objectTemplate: templates/guaranteed/configmap1.yaml
-        replicas: 1
-      - objectTemplate: templates/guaranteed/configmap2.yaml
-        replicas: 1
-      - objectTemplate: templates/guaranteed/secret1.yaml
-        replicas: 1
-      - objectTemplate: templates/guaranteed/secret2.yaml
-        replicas: 1
-      - objectTemplate: templates/guaranteed/secret3.yaml
-        replicas: 1
-      - objectTemplate: templates/guaranteed/secret4.yaml
-        replicas: 1
+
 
     # Template of burstable pods with exec probes
       - objectTemplate: templates/webserver/webserver-deployment.yaml
