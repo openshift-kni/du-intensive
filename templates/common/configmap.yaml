@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  {{ if .group }}
+  name: configmap-{{ .group }}-{{ .Replica }}
+  {{ else }}
+  name: configmap-{{ .Replica }}
+  {{ end }}
+{{ if .data }}
+data: {{ mustToJson .data }}
+{{ else }}
+data:
+  data.yaml: |-
+    a: 1
+    b: 2
+    c: 3
+{{ end }}
