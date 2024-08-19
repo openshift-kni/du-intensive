@@ -1,7 +1,6 @@
-## Kube-burner-ocp based template for a RAN DU workload
+## Kube-burner based template for a RAN DU workload
 
-This repository holds the templates for a DU workload that is deployed with [kube-burner](https://github.com/kube-burner/kube-burner)
-
+Templates for a DU workload deployed with [kube-burner](https://github.com/kube-burner/kube-burner)
 
 | Pod | Number of Pods | Specs | Stress |
 |-----|----------------|-------| ------- |
@@ -10,10 +9,9 @@ This repository holds the templates for a DU workload that is deployed with [kub
 | BestEffort - curl_app | 10 pods | - 100 mc CPU, 128 Mib Memory<br>- Liveness Probes (every 10 secs)| Kubelet stress with probes, ~10-30% increase |
 | BestEffort - kubectl_pods | 10 pods | - 100 mc CPU , 128 Mib Memory<br>- kubectl get (every 1 sec) | Kube-api-server stress with kubectl get, ~50% increase |
 
-This workload is intended to be deployed by the ocp-far-edge-vran pipeline but the templates can be run locally using kube-burner
+Intended for use in internal system testing pipelines but the templates can be run on any cluster supported by kube-burner
 
-
-### Steps to run workload with cpu_util tests:
+### Steps to run workload with cpu_utilization tests:
 
 * Run the MIRROR_SPOKE_OPERATOR_IMAGES stage in ocp-far-edge-vran-deployment pipeline to mirror necessary test images
 * Run the cpu_util test using ocp-far-edge-vran-tests pipeline
