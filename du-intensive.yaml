@@ -48,24 +48,24 @@ jobs:
 
     # Template of burstable pods with exec probes
       - objectTemplate: templates/webserver/webserver-deployment.yaml
-        replicas: 10
+        replicas: 5
         inputVars:
           Image: "{{ .REGISTRY }}/sampleapp"
       - objectTemplate: templates/webserver/webserver-service.yaml
-        replicas: 10
+        replicas: 5
       - objectTemplate: templates/webserver/curl-deployment.yaml
-        replicas: 10
+        replicas: 5
         inputVars:
           Image: "{{ .REGISTRY }}/curl"
 
     # Templates of burstable pods with kubeapiserver reqs
       - objectTemplate: templates/kubectlapp/serviceaccount.yaml
-        replicas: 10
+        replicas: 3
       - objectTemplate: templates/kubectlapp/role.yaml
-        replicas: 10
+        replicas: 3
       - objectTemplate: templates/kubectlapp/rolebinding.yaml
-        replicas: 10
+        replicas: 3
       - objectTemplate: templates/kubectlapp/deployment.yaml
-        replicas: 10
+        replicas: 3
         inputVars:
           Image: "{{ .REGISTRY }}/kubectl"
