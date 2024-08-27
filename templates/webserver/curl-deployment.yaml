@@ -33,7 +33,7 @@ spec:
                 - "/bin/sh"
                 - "-c"
                 - "curl ${WEBSERVER_HOSTNAME}:${WEBSERVER_PORT}"
-            periodSeconds: 1
+            periodSeconds: 15
             timeoutSeconds: 1
             failureThreshold: 600
           livenessProbe:
@@ -42,7 +42,7 @@ spec:
                 - "/bin/sh"
                 - "-c"
                 - "curl ${WEBSERVER_HOSTNAME}:${WEBSERVER_PORT}"
-            periodSeconds: 10
+            periodSeconds: 15
             timeoutSeconds: 5
             failureThreshold: 3
       restartPolicy: Always
