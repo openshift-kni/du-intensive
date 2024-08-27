@@ -48,13 +48,13 @@ jobs:
 
     # Template of burstable pods with exec probes
       - objectTemplate: templates/webserver/webserver-deployment.yaml
-        replicas: 5
+        replicas: 4
         inputVars:
           Image: "{{ .REGISTRY }}/sampleapp"
       - objectTemplate: templates/webserver/webserver-service.yaml
-        replicas: 5
+        replicas: 4
       - objectTemplate: templates/webserver/curl-deployment.yaml
-        replicas: 5
+        replicas: 4
         inputVars:
           Image: "{{ .REGISTRY }}/curl"
 
