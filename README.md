@@ -9,13 +9,15 @@ Templates for a DU workload deployed with [kube-burner](https://github.com/kube-
 | BestEffort - curl_app | 4 pods, 2 containers each | - 100 mc CPU, 128 Mib Memory<br>- 2 configmaps and 4 secrets<br>- Liveness Probes (every 10 secs)| Kubelet stress with probes, ~250 KB per sec n/w traffic on Primary CNI |
 | BestEffort - kubectl_pods | 6 pods, 2 containers each | - 100 mc CPU , 128 Mib Memory<br>- 2 configmaps and 4 secrets<br>- 2 kubectl gets (every 5 sec) | Kube-api-server stress with kubectl get, ~10% increase due to workload |
 
-Total pods - 15 pods / 30 containers
-2 config maps and 4 secrets in each pod
-Exec Probes less than 10 in total and frequency >10 secs
-No Exec probes on Gu pod
-Traffic on primary CNI due to workload expected around 350 KB per sec
-kube api-server incremental load due to workload expected to increase by 5-8% 
-Intended for use in internal system testing pipelines but the templates can be run on any cluster with kube-burner
+* Total pods - 15 pods / 30 containers
+* 2 config maps and 4 secrets in each pod
+* Exec Probes less than 10 in total and frequency >10 secs
+* No Exec probes on Gu pod
+* Traffic on primary CNI due to workload expected around 350 KB per sec
+* kube api-server incremental load due to workload expected to increase by 5-8%
+
+
+###### Intended for use in internal system testing pipelines but the templates can be run on any cluster with kube-burner
 
 ### Steps to run workload with cpu_utilization tests:
 
