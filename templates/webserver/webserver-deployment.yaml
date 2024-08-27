@@ -31,7 +31,6 @@ spec:
             requests:
               cpu: 100m
               memory: 64Mi
-              hugepages-1Gi: 16Gi
           env:
             - name: stress_cpu
               value: "10%"
