@@ -32,11 +32,11 @@ spec:
           # Request and Limits must be identical for the Pod to be assigned to the QoS Guarantee
           resources:
             requests:
-              cpu: 32000m
+              cpu: 32
               memory: 1024M
               hugepages-1Gi: 16Gi
             limits:
-              cpu: 32000m
+              cpu: 32
               memory: 1024M
               hugepages-1Gi: 16Gi
           env:
