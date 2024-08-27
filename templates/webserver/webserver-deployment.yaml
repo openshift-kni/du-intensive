@@ -18,6 +18,9 @@ spec:
             requests:
               cpu: 100m
               memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
           ports:
           - containerPort: 8080
             protocol: TCP
@@ -34,6 +37,9 @@ spec:
             requests:
               cpu: 100m
               memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
           env:
             - name: stress_cpu
               value: "1"

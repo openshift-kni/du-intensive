@@ -54,6 +54,10 @@ spec:
               mountPath: /hugepages
         - name: nginx
           image: "{{ .Image_nginx }}"
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
           ports:
             - containerPort: 8080
           startupProbe:

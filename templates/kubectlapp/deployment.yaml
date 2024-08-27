@@ -28,6 +28,9 @@ spec:
             requests:
               cpu: 100m
               memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
           volumeMounts:
             {{ range  $volume := .volumes }}
             - name: {{ $volume.name }}
@@ -35,6 +38,10 @@ spec:
             {{ end }}
         - name: nginx
           image: "{{ .Image_nginx }}"
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
           ports:
             - containerPort: 8080
           startupProbe:
