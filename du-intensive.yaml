@@ -48,25 +48,27 @@ jobs:
 
     # Template of burstable pods with exec probes
       - objectTemplate: templates/webserver/webserver-deployment.yaml
-        replicas: 4
+        replicas: 5
         inputVars:
-          Image: "{{ .REGISTRY }}/sampleapp"
+          Image_nginx: "{{ .REGISTRY }}/sampleapp"
+          Image_stressng: "{{ .REGISTRY }}/fedora-stress-ng"
       - objectTemplate: templates/webserver/webserver-service.yaml
-        replicas: 4
+        replicas: 5
       - objectTemplate: templates/webserver/curl-deployment.yaml
-        replicas: 4
+        replicas: 5
         inputVars:
-          Image: "{{ .REGISTRY }}/curl"
+          Image_curl: "{{ .REGISTRY }}/curl"
+          Image_nginx: "{{ .REGISTRY }}/sampleapp"
 
     # Templates of burstable pods with kubeapiserver reqs
       - objectTemplate: templates/kubectlapp/serviceaccount.yaml
-        replicas: 5
+        replicas: 4
       - objectTemplate: templates/kubectlapp/role.yaml
-        replicas: 5
+        replicas: 4
       - objectTemplate: templates/kubectlapp/rolebinding.yaml
-        replicas: 5
+        replicas: 4
       - objectTemplate: templates/kubectlapp/deployment.yaml
-        replicas: 5
+        replicas: 4
         inputVars:
           Image_kubectl: "{{ .REGISTRY }}/kubectl"
           Image_nginx: "{{ .REGISTRY }}/sampleapp"

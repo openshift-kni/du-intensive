@@ -52,6 +52,22 @@ spec:
             {{ end }}
             - name: hugepage
               mountPath: /hugepages
+        - name: nginx
+          image: "{{ .Image_nginx }}"
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 60
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 60
       dnsPolicy: Default
       terminationGracePeriodSeconds: 1
       volumes:

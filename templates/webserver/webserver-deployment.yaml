@@ -12,18 +12,29 @@ spec:
       nodeSelector:
         node-role.kubernetes.io/worker: ""
       containers:
-      - name: webserver
-        image: "{{ .Image }}"
-        resources:
-          requests:
-            cpu: 100m
-            memory: 128Mi
-        ports:
-        - containerPort: 8080
-          protocol: TCP
-        imagePullPolicy: IfNotPresent
-        securityContext:
-          privileged: false
+        - name: webserver
+          image: "{{ .Image_nginx }}"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            privileged: false
+        - name: stressng
+          image: "{{ .Image_stressng }}"
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+              hugepages-1Gi: 16Gi
+          env:
+            - name: stress_cpu
+              value: "10%"
       restartPolicy: Always
   replicas: 1
   selector:
