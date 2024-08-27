@@ -2,12 +2,12 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: kubectlapp-{{.Replica}}
-  # namespace: workload
 spec:
   template:
     metadata:
       labels:
         name: kubectlapp-{{.Replica}}
+        redhat-best-practices-for-k8s.com/generic: target
     spec:
       serviceAccountName: kubectlapp-sa-{{.Replica}}
       nodeSelector:
@@ -32,5 +32,6 @@ spec:
   selector:
     matchLabels:
       name: kubectlapp-{{.Replica}}
+      redhat-best-practices-for-k8s.com/generic: target
   strategy:
     type: RollingUpdate

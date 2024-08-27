@@ -7,6 +7,7 @@ spec:
     metadata:
       labels:
         name: webserver-{{.Replica}}
+        redhat-best-practices-for-k8s.com/generic: target
     spec:
       nodeSelector:
         node-role.kubernetes.io/worker: ""
@@ -28,5 +29,6 @@ spec:
   selector:
     matchLabels:
       name: webserver-{{.Replica}}
+      redhat-best-practices-for-k8s.com/generic: target
   strategy:
     type: RollingUpdate
