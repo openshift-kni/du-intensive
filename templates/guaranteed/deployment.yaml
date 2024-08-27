@@ -15,32 +15,32 @@ spec:
   selector:
     matchLabels:
       name: du-workload-{{.Replica}}
+      redhat-best-practices-for-k8s.com/generic: target
   template:
     metadata:
       labels:
         group: load
         name: du-workload-{{.Replica}}
+        redhat-best-practices-for-k8s.com/generic: target
     spec:
       runtimeClassName: performance-openshift-node-performance-profile
       containers:
-        - image: "{{ .Image }}"
-          imagePullPolicy: Always
+        - image: "{{ .Image_stressng }}"
+          imagePullPolicy: IfNotPresent
           name: du-workload-{{.Replica}}
           # Request and Limits must be identical for the Pod to be assigned to the QoS Guarantee
           resources:
             requests:
-              cpu: 32000m
+              cpu: 31
               memory: 1024M
               hugepages-1Gi: 16Gi
             limits:
-              cpu: 32000m
+              cpu: 31
               memory: 1024M
               hugepages-1Gi: 16Gi
-          # securityContext:
-          #   privileged: true
           env:
             - name: stress_cpu
-              value: "32"
+              value: "31"
             - name: stress_vm
               value: "1"
             - name: stress_vm-bytes
@@ -52,19 +52,37 @@ spec:
             {{ end }}
             - name: hugepage
               mountPath: /hugepages
+        - name: nginx
+          image: "{{ .Image_nginx }}"
+          resources:
+            requests:
+              cpu: 1
+              memory: 256Mi
+            limits:
+              cpu: 1
+              memory: 256Mi
+          ports:
+            - containerPort: 8080
+          startupProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 60
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 60
       dnsPolicy: Default
       terminationGracePeriodSeconds: 1
-      # Add not-ready/unreachable tolerations for 15 minutes so that node
-      # failure doesn't trigger pod deletion.
-      tolerations:
-        - key: "node.kubernetes.io/not-ready"
-          operator: "Exists"
-          effect: "NoExecute"
-          tolerationSeconds: 900
-        - key: "node.kubernetes.io/unreachable"
-          operator: "Exists"
-          effect: "NoExecute"
-          tolerationSeconds: 900
       volumes:
         {{ range  $volume := .volumes }}
         - name: {{ $volume.name }}

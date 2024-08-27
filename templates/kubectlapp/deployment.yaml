@@ -2,35 +2,82 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: kubectlapp-{{.Replica}}
-  # namespace: workload
 spec:
   template:
     metadata:
       labels:
         name: kubectlapp-{{.Replica}}
+        redhat-best-practices-for-k8s.com/generic: target
     spec:
       serviceAccountName: kubectlapp-sa-{{.Replica}}
       nodeSelector:
         node-role.kubernetes.io/worker: ""
       containers:
         - name: kubectlapp
-          image: "{{ .Image }}"
+          image: "{{ .Image_kubectl }}"
+          imagePullPolicy: IfNotPresent
           command: ["/bin/sh","-c"]
           args:
           - |
             while true; do
               kubectl get pods -n workload
               kubectl get services -n workload
-              sleep 1
+              sleep 2
             done
           resources:
             requests:
               cpu: 100m
               memory: 128Mi
+          volumeMounts:
+            {{ range  $volume := .volumes }}
+            - name: {{ $volume.name }}
+              mountPath: {{ $volume.path }}
+            {{ end }}
+        - name: nginx
+          image: "{{ .Image_nginx }}"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          ports:
+            - containerPort: 8080
+          startupProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 60
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 60
       restartPolicy: Always
+      volumes:
+        {{ range  $volume := .volumes }}
+        - name: {{ $volume.name }}
+          {{ if eq $volume.type "configMap" }}
+          configMap:
+            name: {{ $volume.name }}
+          {{ else if eq $volume.type "secret" }}
+          secret:
+            secretName: {{ $volume.name }}
+          {{ else if eq $volume.type "persistentVolumeClaim" }}
+          persistentVolumeClaim:
+            claimName: {{ $volume.name }}
+          {{ end }}
+        {{ end }}
   replicas: 1
   selector:
     matchLabels:
       name: kubectlapp-{{.Replica}}
+      redhat-best-practices-for-k8s.com/generic: target
   strategy:
     type: RollingUpdate

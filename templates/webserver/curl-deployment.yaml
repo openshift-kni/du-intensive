@@ -7,12 +7,13 @@ spec:
     metadata:
       labels:
         name: curl-{{.Replica}}
+        redhat-best-practices-for-k8s.com/generic: target
     spec:
       nodeSelector:
         node-role.kubernetes.io/worker: ""
       containers:
         - name: curlapp
-          image: "{{ .Image }}"
+          image: "{{ .Image_curl }}"
           command: ["sleep", "inf"]
           resources:
             requests:
@@ -23,6 +24,11 @@ spec:
               value: webserver-{{.Replica}}
             - name: WEBSERVER_PORT
               value: "8080"
+          volumeMounts:
+            {{ range  $volume := .volumes }}
+            - name: {{ $volume.name }}
+              mountPath: {{ $volume.path }}
+            {{ end }}
           imagePullPolicy: IfNotPresent
           securityContext:
             privileged: false
@@ -32,7 +38,7 @@ spec:
                 - "/bin/sh"
                 - "-c"
                 - "curl ${WEBSERVER_HOSTNAME}:${WEBSERVER_PORT}"
-            periodSeconds: 1
+            periodSeconds: 15
             timeoutSeconds: 1
             failureThreshold: 600
           livenessProbe:
@@ -41,13 +47,54 @@ spec:
                 - "/bin/sh"
                 - "-c"
                 - "curl ${WEBSERVER_HOSTNAME}:${WEBSERVER_PORT}"
-            periodSeconds: 10
+            periodSeconds: 15
             timeoutSeconds: 5
             failureThreshold: 3
+        - name: nginx
+          image: "{{ .Image_nginx }}"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          ports:
+            - containerPort: 8080
+          startupProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 60
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 60
       restartPolicy: Always
+      volumes:
+        {{ range  $volume := .volumes }}
+        - name: {{ $volume.name }}
+          {{ if eq $volume.type "configMap" }}
+          configMap:
+            name: {{ $volume.name }}
+          {{ else if eq $volume.type "secret" }}
+          secret:
+            secretName: {{ $volume.name }}
+          {{ else if eq $volume.type "persistentVolumeClaim" }}
+          persistentVolumeClaim:
+            claimName: {{ $volume.name }}
+          {{ end }}
+        {{ end }}
   replicas: 1
   selector:
     matchLabels:
       name: curl-{{.Replica}}
+      redhat-best-practices-for-k8s.com/generic: target
   strategy:
     type: RollingUpdate

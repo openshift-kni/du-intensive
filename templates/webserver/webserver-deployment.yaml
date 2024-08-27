@@ -7,26 +7,55 @@ spec:
     metadata:
       labels:
         name: webserver-{{.Replica}}
+        redhat-best-practices-for-k8s.com/generic: target
     spec:
       nodeSelector:
         node-role.kubernetes.io/worker: ""
       containers:
-      - name: webserver
-        image: "{{ .Image }}"
-        resources:
-          requests:
-            cpu: 100m
-            memory: 128Mi
-        ports:
-        - containerPort: 8080
-          protocol: TCP
-        imagePullPolicy: IfNotPresent
-        securityContext:
-          privileged: false
+        - name: webserver
+          image: "{{ .Image_nginx }}"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            {{ range  $volume := .volumes }}
+            - name: {{ $volume.name }}
+              mountPath: {{ $volume.path }}
+            {{ end }}
+        - name: stressng
+          image: "{{ .Image_stressng }}"
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          env:
+            - name: stress_cpu
+              value: "1"
       restartPolicy: Always
+      volumes:
+        {{ range  $volume := .volumes }}
+        - name: {{ $volume.name }}
+          {{ if eq $volume.type "configMap" }}
+          configMap:
+            name: {{ $volume.name }}
+          {{ else if eq $volume.type "secret" }}
+          secret:
+            secretName: {{ $volume.name }}
+          {{ else if eq $volume.type "persistentVolumeClaim" }}
+          persistentVolumeClaim:
+            claimName: {{ $volume.name }}
+          {{ end }}
+        {{ end }}
   replicas: 1
   selector:
     matchLabels:
       name: webserver-{{.Replica}}
+      redhat-best-practices-for-k8s.com/generic: target
   strategy:
     type: RollingUpdate
