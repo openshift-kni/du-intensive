@@ -33,7 +33,7 @@ spec:
               memory: 64Mi
           env:
             - name: stress_cpu
-              value: "10%"
+              value: "1"
       restartPolicy: Always
   replicas: 1
   selector:
