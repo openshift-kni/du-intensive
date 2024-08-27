@@ -24,6 +24,11 @@ spec:
               value: webserver-{{.Replica}}
             - name: WEBSERVER_PORT
               value: "8080"
+          volumeMounts:
+            {{ range  $volume := .volumes }}
+            - name: {{ $volume.name }}
+              mountPath: {{ $volume.path }}
+            {{ end }}
           imagePullPolicy: IfNotPresent
           securityContext:
             privileged: false
@@ -62,6 +67,20 @@ spec:
             initialDelaySeconds: 15
             periodSeconds: 60
       restartPolicy: Always
+      volumes:
+        {{ range  $volume := .volumes }}
+        - name: {{ $volume.name }}
+          {{ if eq $volume.type "configMap" }}
+          configMap:
+            name: {{ $volume.name }}
+          {{ else if eq $volume.type "secret" }}
+          secret:
+            secretName: {{ $volume.name }}
+          {{ else if eq $volume.type "persistentVolumeClaim" }}
+          persistentVolumeClaim:
+            claimName: {{ $volume.name }}
+          {{ end }}
+        {{ end }}
   replicas: 1
   selector:
     matchLabels:

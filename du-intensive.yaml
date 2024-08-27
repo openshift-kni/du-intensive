@@ -53,6 +53,25 @@ jobs:
         inputVars:
           Image_nginx: "{{ .REGISTRY }}/sampleapp"
           Image_stressng: "{{ .REGISTRY }}/fedora-stress-ng"
+          volumes:
+            - name: configmap-1
+              type: configMap
+              path: /var/configmap1
+            - name: configmap-2
+              type: configMap
+              path: /var/configmap2
+            - name: secret-1
+              type: secret
+              path: /var/secret1
+            - name: secret-2
+              type: secret
+              path: /var/secret2
+            - name: secret-3
+              type: secret
+              path: /var/secret3
+            - name: secret-4
+              type: secret
+              path: /var/secret4
       - objectTemplate: templates/webserver/webserver-service.yaml
         replicas: 5
       - objectTemplate: templates/webserver/curl-deployment.yaml
@@ -60,6 +79,25 @@ jobs:
         inputVars:
           Image_curl: "{{ .REGISTRY }}/curl"
           Image_nginx: "{{ .REGISTRY }}/sampleapp"
+          volumes:
+            - name: configmap-1
+              type: configMap
+              path: /var/configmap1
+            - name: configmap-2
+              type: configMap
+              path: /var/configmap2
+            - name: secret-1
+              type: secret
+              path: /var/secret1
+            - name: secret-2
+              type: secret
+              path: /var/secret2
+            - name: secret-3
+              type: secret
+              path: /var/secret3
+            - name: secret-4
+              type: secret
+              path: /var/secret4
 
     # Templates of burstable pods with kubeapiserver reqs
       - objectTemplate: templates/kubectlapp/serviceaccount.yaml
@@ -73,3 +111,22 @@ jobs:
         inputVars:
           Image_kubectl: "{{ .REGISTRY }}/kubectl"
           Image_nginx: "{{ .REGISTRY }}/sampleapp"
+          volumes:
+            - name: configmap-1
+              type: configMap
+              path: /var/configmap1
+            - name: configmap-2
+              type: configMap
+              path: /var/configmap2
+            - name: secret-1
+              type: secret
+              path: /var/secret1
+            - name: secret-2
+              type: secret
+              path: /var/secret2
+            - name: secret-3
+              type: secret
+              path: /var/secret3
+            - name: secret-4
+              type: secret
+              path: /var/secret4

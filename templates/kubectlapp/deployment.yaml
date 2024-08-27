@@ -28,6 +28,11 @@ spec:
             requests:
               cpu: 100m
               memory: 128Mi
+          volumeMounts:
+            {{ range  $volume := .volumes }}
+            - name: {{ $volume.name }}
+              mountPath: {{ $volume.path }}
+            {{ end }}
         - name: nginx
           image: "{{ .Image_nginx }}"
           ports:
@@ -45,6 +50,20 @@ spec:
             initialDelaySeconds: 15
             periodSeconds: 60
       restartPolicy: Always
+      volumes:
+        {{ range  $volume := .volumes }}
+        - name: {{ $volume.name }}
+          {{ if eq $volume.type "configMap" }}
+          configMap:
+            name: {{ $volume.name }}
+          {{ else if eq $volume.type "secret" }}
+          secret:
+            secretName: {{ $volume.name }}
+          {{ else if eq $volume.type "persistentVolumeClaim" }}
+          persistentVolumeClaim:
+            claimName: {{ $volume.name }}
+          {{ end }}
+        {{ end }}
   replicas: 1
   selector:
     matchLabels:
