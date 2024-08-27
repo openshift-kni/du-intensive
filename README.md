@@ -13,6 +13,7 @@ Total pods - 15 pods / 29 containers
 2 config maps and 4 secrets each
 Exec Probes less than 10 in total and frequency >10 secs
 No Exec probes on Gu pod
+Traffic expected on primary CNI due to workload around 350 KB per sec
 Intended for use in internal system testing pipelines but the templates can be run on any cluster with kube-burner
 
 ### Steps to run workload with cpu_utilization tests:
