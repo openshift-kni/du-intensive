@@ -14,7 +14,7 @@ spec:
         node-role.kubernetes.io/worker: ""
       containers:
         - name: kubectlapp
-          image: "{{ .Image }}"
+          image: "{{ .Image_kubectl }}"
           imagePullPolicy: IfNotPresent
           command: ["/bin/sh","-c"]
           args:
@@ -28,6 +28,22 @@ spec:
             requests:
               cpu: 100m
               memory: 128Mi
+        - name: nginx
+          image: "{{ .Image_nginx }}"
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 60
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 60
       restartPolicy: Always
   replicas: 1
   selector:

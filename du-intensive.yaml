@@ -68,4 +68,5 @@ jobs:
       - objectTemplate: templates/kubectlapp/deployment.yaml
         replicas: 3
         inputVars:
-          Image: "{{ .REGISTRY }}/kubectl"
+          Image_kubectl: "{{ .REGISTRY }}/kubectl"
+          Image_nginx: "{{ .REGISTRY }}/sampleapp"
