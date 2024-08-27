@@ -21,7 +21,8 @@ jobs:
       - objectTemplate: templates/guaranteed/deployment.yaml
         replicas: 1
         inputVars:
-          Image: "{{ .REGISTRY }}/fedora-stress-ng"
+          Image_stressng: "{{ .REGISTRY }}/fedora-stress-ng"
+          Image_nginx: "{{ .REGISTRY }}/sampleapp"
           volumes:
             - name: configmap-1
               type: configMap

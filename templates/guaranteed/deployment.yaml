@@ -25,7 +25,7 @@ spec:
     spec:
       runtimeClassName: performance-openshift-node-performance-profile
       containers:
-        - image: "{{ .Image }}"
+        - image: "{{ .Image_stressng }}"
           imagePullPolicy: IfNotPresent
           name: du-workload-{{.Replica}}
           # Request and Limits must be identical for the Pod to be assigned to the QoS Guarantee
