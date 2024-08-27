@@ -60,13 +60,13 @@ jobs:
 
     # Templates of burstable pods with kubeapiserver reqs
       - objectTemplate: templates/kubectlapp/serviceaccount.yaml
-        replicas: 3
+        replicas: 5
       - objectTemplate: templates/kubectlapp/role.yaml
-        replicas: 3
+        replicas: 5
       - objectTemplate: templates/kubectlapp/rolebinding.yaml
-        replicas: 3
+        replicas: 5
       - objectTemplate: templates/kubectlapp/deployment.yaml
-        replicas: 3
+        replicas: 5
         inputVars:
           Image_kubectl: "{{ .REGISTRY }}/kubectl"
           Image_nginx: "{{ .REGISTRY }}/sampleapp"
