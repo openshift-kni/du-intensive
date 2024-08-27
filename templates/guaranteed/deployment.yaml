@@ -10,6 +10,7 @@ metadata:
   labels:
     group: load
     svc: du-workload-{{.Replica}}
+    redhat-best-practices-for-k8s.com/generic: target
 spec:
   replicas: 1
   selector:
