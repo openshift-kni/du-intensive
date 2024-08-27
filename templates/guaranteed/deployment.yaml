@@ -10,12 +10,12 @@ metadata:
   labels:
     group: load
     svc: du-workload-{{.Replica}}
-    redhat-best-practices-for-k8s.com/generic: target
 spec:
   replicas: 1
   selector:
     matchLabels:
       name: du-workload-{{.Replica}}
+      redhat-best-practices-for-k8s.com/generic: target
   template:
     metadata:
       labels:
@@ -26,7 +26,7 @@ spec:
       runtimeClassName: performance-openshift-node-performance-profile
       containers:
         - image: "{{ .Image }}"
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           name: du-workload-{{.Replica}}
           # Request and Limits must be identical for the Pod to be assigned to the QoS Guarantee
           resources:
