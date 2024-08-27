@@ -19,9 +19,6 @@ spec:
             requests:
               cpu: 100m
               memory: 128Mi
-            limits:
-              cpu: 200m
-              memory: 256Mi
           env:
             - name: WEBSERVER_HOSTNAME
               value: webserver-{{.Replica}}
@@ -56,7 +53,7 @@ spec:
         - name: nginx
           image: "{{ .Image_nginx }}"
           resources:
-            limits:
+            requests:
               cpu: 100m
               memory: 128Mi
           ports:
