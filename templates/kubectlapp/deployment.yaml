@@ -46,7 +46,7 @@ spec:
               path: /
               port: 8080
             initialDelaySeconds: 5
-            periodSeconds: 60
+            periodSeconds: 15
           readinessProbe:
             httpGet:
               path: /
