@@ -13,7 +13,6 @@ jobs:
     errorOnVerify: true
     defaultMissingKeysWithZero: true
     objects:
-
     # Template of Gu Pods with fedora-stress-ng
       - objectTemplate: templates/common/configmap.yaml
         replicas: 2
@@ -26,8 +25,8 @@ jobs:
       - objectTemplate: templates/guaranteed/deployment.yaml
         replicas: 1
         inputVars:
-          Image_stressng: "{{ .REGISTRY }}/fedora-stress-ng"
-          Image_nginx: "{{ .REGISTRY }}/sampleapp"
+          Image_stressng: '{{ or .REGISTRY "quay.io/rh_ee_apalanis" }}/fedora-stress-ng'
+          Image_nginx: '{{ or .REGISTRY "quay.io/rh_ee_apalanis" }}/sampleapp'
           volumes:
             - name: configmap-guaranteed-1
               type: configMap
@@ -54,14 +53,14 @@ jobs:
       - objectTemplate: templates/common/configmap.yaml
         replicas: 2
       - objectTemplate: templates/common/secret.yaml
-        replicas: 4 
+        replicas: 4
 
     # Template of burstable pods with exec probes
       - objectTemplate: templates/webserver/webserver-deployment.yaml
         replicas: 4
         inputVars:
-          Image_nginx: "{{ .REGISTRY }}/sampleapp"
-          Image_stressng: "{{ .REGISTRY }}/fedora-stress-ng"
+          Image_stressng: '{{ or .REGISTRY "quay.io/rh_ee_apalanis" }}/fedora-stress-ng'
+          Image_nginx: '{{ or .REGISTRY "quay.io/rh_ee_apalanis" }}/sampleapp'
           volumes:
             - name: configmap-1
               type: configMap
@@ -86,8 +85,8 @@ jobs:
       - objectTemplate: templates/webserver/curl-deployment.yaml
         replicas: 4
         inputVars:
-          Image_curl: "{{ .REGISTRY }}/curl"
-          Image_nginx: "{{ .REGISTRY }}/sampleapp"
+          Image_nginx: '{{ or .REGISTRY "quay.io/rh_ee_apalanis" }}/sampleapp'
+          Image_curl: '{{ or .REGISTRY "quay.io/rh_ee_apalanis" }}/curl'
           volumes:
             - name: configmap-1
               type: configMap
@@ -118,8 +117,8 @@ jobs:
       - objectTemplate: templates/kubectlapp/deployment.yaml
         replicas: 6
         inputVars:
-          Image_kubectl: "{{ .REGISTRY }}/kubectl"
-          Image_nginx: "{{ .REGISTRY }}/sampleapp"
+          Image_nginx: '{{ or .REGISTRY "quay.io/rh_ee_apalanis" }}/sampleapp'
+          Image_kubectl: '{{ or .REGISTRY "quay.io/rh_ee_apalanis" }}/kubectl'
           volumes:
             - name: configmap-1
               type: configMap
@@ -139,3 +138,13 @@ jobs:
             - name: secret-4
               type: secret
               path: /var/secret4
+
+      - objectTemplate: templates/ptp-events-consumer/service-account.yaml
+        replicas: 1
+      - objectTemplate: templates/ptp-events-consumer/deployment.yaml
+        replicas: 1
+        inputVars:
+          Image_ptp_consumer: '{{ or .REGISTRY "quay.io/jenchen" }}/ptp-event-consumer'
+          short_node_name: '{{ (split "." .NODE_NAME)._0 }}'
+      - objectTemplate: templates/ptp-events-consumer/service.yaml
+        replicas: 1
