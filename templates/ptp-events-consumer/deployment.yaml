@@ -19,16 +19,28 @@ spec:
       serviceAccountName: ptp-event-consumer-sa
       containers:
       - name: ptp-consumer
-        image: quay.io/jenchen/ptp-event-consumer:latest
+        image: {{ .Image_ptp_consumer }}
         args:
           - "--local-api-addr=127.0.0.1:27017"
           - "--api-path=/api/ocloudNotifications/v1/"
           - "--api-addr=127.0.0.1:27017"
         env:
         - name: NODE_NAME
+          {{ if .short_node_name }}
+          value: "{{ .short_node_name }}"
+          {{ else }}
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
+          {{ end }}
+        - name: NODE_NAME_FULL
+          {{ if .short_node_name }}
+          value: "{{ .short_node_name }}"
+          {{ else }}
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+          {{ end }}
         - name: NAME_SPACE
           valueFrom:
             fieldRef:
