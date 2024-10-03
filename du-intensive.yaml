@@ -11,41 +11,50 @@ jobs:
     waitWhenFinished: true
     maxWaitTimeout: 5m
     errorOnVerify: true
+    defaultMissingKeysWithZero: true
     objects:
 
     # Template of Gu Pods with fedora-stress-ng
-      - objectTemplate: templates/guaranteed/configmap.yaml
+      - objectTemplate: templates/common/configmap.yaml
         replicas: 2
-      - objectTemplate: templates/guaranteed/secret.yaml
+        inputVars:
+          group: "guaranteed"
+      - objectTemplate: templates/common/secret.yaml
         replicas: 4
+        inputVars:
+          group: "guaranteed"
       - objectTemplate: templates/guaranteed/deployment.yaml
         replicas: 1
         inputVars:
           Image_stressng: "{{ .REGISTRY }}/fedora-stress-ng"
           Image_nginx: "{{ .REGISTRY }}/sampleapp"
           volumes:
-            - name: configmap-1
+            - name: configmap-guaranteed-1
               type: configMap
               path: /var/configmap1
-            - name: configmap-2
+            - name: configmap-guaranteed-2
               type: configMap
               path: /var/configmap2
-            - name: secret-1
+            - name: secret-guaranteed-1
               type: secret
               path: /var/secret1
-            - name: secret-2
+            - name: secret-guaranteed-2
               type: secret
               path: /var/secret2
-            - name: secret-3
+            - name: secret-guaranteed-3
               type: secret
               path: /var/secret3
-            - name: secret-4
+            - name: secret-guaranteed-4
               type: secret
               path: /var/secret4
 
       - objectTemplate: templates/guaranteed/service.yaml
         replicas: 1
 
+      - objectTemplate: templates/common/configmap.yaml
+        replicas: 2
+      - objectTemplate: templates/common/secret.yaml
+        replicas: 4 
 
     # Template of burstable pods with exec probes
       - objectTemplate: templates/webserver/webserver-deployment.yaml
