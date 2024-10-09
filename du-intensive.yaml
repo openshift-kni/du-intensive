@@ -13,8 +13,7 @@ jobs:
     errorOnVerify: true
     defaultMissingKeysWithZero: true
     objects:
-
-    # Template of Gu Pods with fedora-stress-ng
+      # Template of Gu Pods with fedora-stress-ng
       - objectTemplate: templates/common/configmap.yaml
         replicas: 2
         inputVars:
@@ -54,9 +53,9 @@ jobs:
       - objectTemplate: templates/common/configmap.yaml
         replicas: 2
       - objectTemplate: templates/common/secret.yaml
-        replicas: 4 
+        replicas: 4
 
-    # Template of burstable pods with exec probes
+      # Template of burstable pods with exec probes
       - objectTemplate: templates/webserver/webserver-deployment.yaml
         replicas: 4
         inputVars:
@@ -108,7 +107,7 @@ jobs:
               type: secret
               path: /var/secret4
 
-    # Templates of burstable pods with kubeapiserver reqs
+      # Templates of burstable pods with kubeapiserver reqs
       - objectTemplate: templates/kubectlapp/serviceaccount.yaml
         replicas: 6
       - objectTemplate: templates/kubectlapp/role.yaml
@@ -139,3 +138,13 @@ jobs:
             - name: secret-4
               type: secret
               path: /var/secret4
+
+      - objectTemplate: templates/storageio/pv.yaml
+        replicas: 1
+      - objectTemplate: templates/storageio/pvc.yaml
+        replicas: 1
+      - objectTemplate: templates/storageio/deployment.yaml
+        replicas: 1
+        inputVars:
+          Image_stressng: "{{ .REGISTRY }}/fedora-stress-ng"
+          Image_nginx: "{{ .REGISTRY }}/sampleapp"
