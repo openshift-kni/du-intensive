@@ -139,6 +139,7 @@ jobs:
               type: secret
               path: /var/secret4
 
+      # Storage stress with PVC claims
       - objectTemplate: templates/storageio/pv.yaml
         replicas: 1
       - objectTemplate: templates/storageio/pvc.yaml
